@@ -4,9 +4,14 @@ import mediapipe as mp
 import numpy as np
 import time
 from collections import deque
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILE = os.path.join(SCRIPT_DIR, "model.p")
+OUTPUT_FILE = os.path.join(SCRIPT_DIR, "output.txt")
 
 # Load model
-model_dict = pickle.load(open('./model.p', 'rb'))
+model_dict = pickle.load(open(MODEL_FILE, "rb"))
 model = model_dict['model']
 
 # Labels
@@ -39,6 +44,13 @@ LETTER_DELAY = 3
 SPACE_DELAY = 3
 SENTENCE_DELAY = 8
 
+def append_recognized_item(text, item):
+    if len(item) > 1:
+        if text and not text.endswith(" "):
+            text += " "
+        return text + item + " "
+    return text + item
+
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -50,8 +62,18 @@ while True:
     results = hands.process(frame_rgb)
     current_time = time.time()
 
+    # Close or overlapping two-hand detections are handled explicitly instead
+    # of being mistaken for the hand having disappeared.
+    if results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 2:
+        last_hand_seen_time = current_time
+        hand_was_present = True
+        buffer.clear()
+        current_letter = ""
+        cv2.putText(frame, "Tracking paused: two hands close", (20, 100),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+
     # ================= HAND DETECTED =================
-    if results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 1:
+    elif results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 1:
         last_hand_seen_time = current_time
 
         # If hand was missing, reset tracking state so no ghost letter is added
@@ -101,7 +123,7 @@ while True:
                     last_added_time = current_time
 
                 elif current_time - last_added_time >= LETTER_DELAY:
-                    sentence += stable_prediction
+                    sentence = append_recognized_item(sentence, stable_prediction)
                     print("Letter added:", stable_prediction)
 
                     current_letter = ""
@@ -138,7 +160,7 @@ while True:
             if sentence.strip() != "":
                 print("Final Sentence:", sentence)
 
-                with open("output.txt", "a") as f:
+                with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
                     f.write(sentence.strip() + "\n")
 
                 sentence = ""
@@ -152,7 +174,7 @@ while True:
     # EXIT
     if cv2.waitKey(1) & 0xFF == ord('q'):
         if sentence.strip() != "":
-            with open("output.txt", "a") as f:
+            with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
                 f.write(sentence.strip() + "\n")
             print("Saved on exit:", sentence)
         break

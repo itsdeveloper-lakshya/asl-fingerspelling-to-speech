@@ -3,9 +3,13 @@ import cv2
 import mediapipe as mp
 import numpy as np
 from collections import deque
+import os
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILE = os.path.join(SCRIPT_DIR, "model.p")
 
 # Load trained model
-model_dict = pickle.load(open('./model.p', 'rb'))
+model_dict = pickle.load(open(MODEL_FILE, "rb"))
 model = model_dict['model']
 
 labels_dict = {

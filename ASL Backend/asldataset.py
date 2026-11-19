@@ -2,10 +2,19 @@ import os
 import pickle
 import mediapipe as mp
 import cv2
+import argparse
 
-DATA_DIR = r"C:\Users\gupta\OneDrive\Documents\Desktop\data"
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "data.pickle")
+
+parser = argparse.ArgumentParser(description="Extract normalized hand landmarks from ASL training images.")
+parser.add_argument(
+    "--data-dir",
+    default=os.environ.get("ASL_DATA_DIR", os.path.join(SCRIPT_DIR, "data")),
+    help="Dataset directory containing one folder per ASL class (default: ASL Backend/data or ASL_DATA_DIR)",
+)
+args = parser.parse_args()
+DATA_DIR = os.path.abspath(args.data_dir)
 
 # 32-class ASL label map
 labels_dict = {

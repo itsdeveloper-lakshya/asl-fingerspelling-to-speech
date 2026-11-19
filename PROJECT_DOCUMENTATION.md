@@ -82,8 +82,8 @@ Hackathon Project/
 **Purpose**: Converts raw hand gesture images into machine-learning-ready numerical features.
 
 **How it works**:
-1. Reads all `.jpg`/`.png` images from `C:\Users\gupta\OneDrive\Documents\Desktop\data`.
-2. The `data/` folder contains **32 subfolders** (named `0` through `31`), each containing ~300 images.
+1. Reads `.jpg`/`.png` images from `--data-dir`, `ASL_DATA_DIR`, or the local `ASL Backend/data/` directory.
+2. The dataset is organized into **32 subfolders** (named `0` through `31` or by class names such as `A` and `Hello`) with separate image samples for each class.
 3. For each image, MediaPipe Hands detects **21 hand landmark points** (wrist, thumb joints, index joints, etc.).
 4. Each landmark has an `(x, y)` coordinate normalized to the frame dimensions `[0.0, 1.0]`.
 5. Features are **scale-normalized** by dividing by the hand's bounding box size:
@@ -388,9 +388,9 @@ const PREDICT_THROTTLE_MS = 110;  // ~9 FPS
 
 **Hold-to-Commit Logic** (Lines 322–338):
 ```
-LETTER_HOLD_DURATION_MS = 2200   // Hold gesture 2.2 seconds to commit
-SPACE_HOLD_DURATION_MS = 2600    // Drop hand 2.6 seconds for space
-AUTO_TRANSLATE_IDLE_MS = 6500    // Auto-translate after 6.5 seconds idle
+LETTER_HOLD_DURATION_MS = 800   // Hold gesture 0.8 seconds to commit
+SPACE_HOLD_DURATION_MS = 1200   // Drop hand 1.2 seconds for space
+AUTO_TRANSLATE_IDLE_MS = 4000   // Auto-translate after 4 seconds idle
 ```
 
 **Visual Progress Bar**: A cyan-to-green gradient bar fills from 0% to 100% as the user holds a gesture, providing immediate visual feedback.
@@ -664,7 +664,7 @@ When the hand re-enters the frame, it starts from a completely clean state — n
 
 ### Future Enhancements
 1. **Indian Sign Language (ISL)** support (beyond ASL).
-2. **Continuous sign recognition** (dynamic gestures like J, Z that involve motion).
+2. **Continuous sign recognition** (J and Z are currently limitations: they involve motion, but the present model was trained on still poses rather than temporal sequences).
 3. **Mobile app** with on-device TensorFlow Lite model.
 4. **Two-way translation** — spoken/typed text converted to animated sign language avatar.
 5. **Multi-hand phrase detection** for compound signs.

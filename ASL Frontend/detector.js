@@ -282,7 +282,7 @@ function handleHandResults(results) {
     if (sensorStatusText) sensorStatusText.innerText = "Looking for Hand";
     if (statusPulseDot) statusPulseDot.className = "status-pulse-dot";
 
-    // Trigger Space when hand lowered for 2.6s
+    // Trigger Space after the configured hand-away duration.
     if (timeWithoutHand >= SPACE_HOLD_DURATION_MS && !spaceAddedForCurrentDrop) {
       if (currentSentence.length > 0 && !currentSentence.endsWith(" ")) {
         currentSentence += " ";
@@ -292,7 +292,7 @@ function handleHandResults(results) {
       spaceAddedForCurrentDrop = true;
     }
 
-    // Trigger Auto-Translate & Speak when hand stays away for 6.5s
+    // Trigger Auto-Translate & Speak after the configured idle duration.
     if (timeWithoutHand >= AUTO_TRANSLATE_IDLE_MS && !autoTranslatedForCurrentDrop) {
       if (currentSentence.trim().length > 0 && currentSentence.trim() !== lastTranslatedSentence) {
         triggerTranslation(false);

@@ -2,14 +2,27 @@ import os
 import pickle
 import mediapipe as mp
 import cv2
+import argparse
 
 # Initialize MediaPipe Hands
 mp_hands = mp.solutions.hands
 # static_image_mode=True is best for processing a fixed dataset of images
 hands = mp_hands.Hands(static_image_mode=True, max_num_hands=2, min_detection_confidence=0.7)
 
-# Your specific local path
-DATA_DIR = r'C:\Users\gupta\Downloads\asl_dataset'
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+parser = argparse.ArgumentParser(description="Extract alternate 84-feature hand landmark samples.")
+parser.add_argument(
+    "--data-dir",
+    default=os.environ.get("ASL_DATA_DIR", os.path.join(SCRIPT_DIR, "data")),
+    help="Dataset directory containing one folder per ASL class",
+)
+parser.add_argument(
+    "--output",
+    default=os.path.join(SCRIPT_DIR, "ASLdata.pickle"),
+    help="Output pickle path",
+)
+args = parser.parse_args()
+DATA_DIR = os.path.abspath(args.data_dir)
 
 data = []
 labels = []
@@ -62,7 +75,7 @@ for dir_ in os.listdir(DATA_DIR):
         labels.append(dir_) # Saves 'a', 'b', '0', etc.
 
 # Save the finalized dataset
-output_file = 'ASLdata.pickle'
+output_file = os.path.abspath(args.output)
 with open(output_file, 'wb') as f:
     pickle.dump({'data': data, 'labels': labels}, f)
 

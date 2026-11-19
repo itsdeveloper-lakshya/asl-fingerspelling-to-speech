@@ -43,3 +43,7 @@ Desktop.ini
 # Generated runtime output
 *.log
 output.txt
+*.bak
+
+# Training datasets
+ASL Backend/data/

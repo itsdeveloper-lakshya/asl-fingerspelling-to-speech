@@ -6,11 +6,16 @@ import time
 import os
 from collections import deque
 
-#  Clear output file on every run
-open("output.txt", "w").close()
+# Resolve files relative to this script so the desktop mode works from any directory.
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUTPUT_FILE = os.path.join(SCRIPT_DIR, "output.txt")
+
+# Clear output file on every run
+open(OUTPUT_FILE, "w", encoding="utf-8").close()
 
 # Load model
-model_dict = pickle.load(open('./model.p', 'rb'))
+model_path = os.path.join(SCRIPT_DIR, "model.p")
+model_dict = pickle.load(open(model_path, "rb"))
 model = model_dict['model']
 
 # Labels
@@ -40,6 +45,13 @@ hand_was_present = False
 LETTER_DELAY = 3
 SPACE_DELAY = 3
 SENTENCE_DELAY = 8
+
+def append_recognized_item(text, item):
+    if len(item) > 1:
+        if text and not text.endswith(" "):
+            text += " "
+        return text + item + " "
+    return text + item
 
 #  FUNCTION: check if hands are far apart (for delete)
 def hands_far_apart(hand1, hand2):
@@ -79,6 +91,17 @@ while True:
             cv2.imshow('frame', frame)
             cv2.waitKey(1)
             continue
+
+        # Two hands close together are a valid visible-hand state, not "no hand".
+        last_hand_seen_time = current_time
+        hand_was_present = True
+        buffer.clear()
+        current_letter = ""
+        cv2.putText(frame, "Tracking paused: two hands close", (20, 100),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2)
+        cv2.imshow('frame', frame)
+        cv2.waitKey(1)
+        continue
 
     # ================= HAND DETECTED =================
     if results.multi_hand_landmarks and len(results.multi_hand_landmarks) == 1:
@@ -129,7 +152,7 @@ while True:
                     last_added_time = current_time
 
                 elif current_time - last_added_time >= LETTER_DELAY:
-                    sentence += stable_prediction
+                    sentence = append_recognized_item(sentence, stable_prediction)
                     print("Letter added:", stable_prediction)
 
                     current_letter = ""
@@ -166,7 +189,7 @@ while True:
             if sentence.strip() != "":
                 print("Final Sentence:", sentence)
 
-                with open("output.txt", "a") as f:
+                with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
                     f.write(sentence.strip() + "\n")
 
                 sentence = ""
@@ -180,7 +203,7 @@ while True:
     # ================= EXIT =================
     if cv2.waitKey(1) & 0xFF == ord('q'):
         if sentence.strip() != "":
-            with open("output.txt", "a") as f:
+            with open(OUTPUT_FILE, "a", encoding="utf-8") as f:
                 f.write(sentence.strip() + "\n")
             print("Saved on exit:", sentence)
 
