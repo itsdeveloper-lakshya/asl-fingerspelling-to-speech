@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>American Sign Language Detector</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Lenis Smooth Scrolling -->
+  <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Premium Interactive Cursor -->
+  <div class="cursor-dot"></div>
+  <div class="cursor-outline"></div>
+
+  <!-- Ambient Antigravity Background -->
+  <canvas id="antigravity-bg"></canvas>
+
+  <!-- Glassmorphism Nav -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="brand">ASL Detector</span>
+    </div>
+    <div class="nav-center">
+      <a href="#hero">Vision</a>
+      <a href="#features">Features</a>
+      <a href="#dictionary">Dictionary</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="nav-right" style="display:flex; align-items:center; gap: 15px;">
+      <div class="theme-picker" title="Change Accent Theme">
+        <div class="theme-dot dot-cyan active" data-theme="cyan"></div>
+        <div class="theme-dot dot-emerald" data-theme="emerald"></div>
+        <div class="theme-dot dot-purple" data-theme="purple"></div>
+        <div class="theme-dot dot-gold" data-theme="gold"></div>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='detector.html'">Try Detector</button>
+    </div>
+  </nav>
+
+  <!-- Pinned Scrollytelling Intro -->
+  <div class="hero-sequence" id="hero">
+    <div class="canvas-container">
+      <canvas id="hero-lightpass"></canvas>
+    </div>
+
+    <!-- Scrollytelling Overlay Text Chapters -->
+    <div class="content-overlay">
+      <!-- 0-20% -->
+      <section class="step step-1">
+        <div class="text-center">
+          <h1 class="hero-title">American Sign Language<br />Detector</h1>
+          <p class="hero-subtitle">Breaking the silence. One gesture at a time.</p>
+        </div>
+      </section>
+
+      <!-- 20-45% -->
+      <section class="step step-2">
+        <div class="text-center panel glass-panel">
+          <h2 class="section-title">About Us</h2>
+          <p class="section-body">Welcome to our initiative where technology meets inclusivity! We are a passionate team
+            of innovators working towards bridging the communication gap between the hearing and speech-impaired
+            communities and the wider world by translating American Sign Language (ASL) seamlessly into text and speech.
+          </p>
+          <p class="section-body mt-3">Our journey began with a simple yet powerful idea: to harness the power of AI to
+            bring voices to the voiceless with dignity and clarity.</p>
+        </div>
+      </section>
+
+      <!-- 45-70% -->
+      <section class="step step-3">
+        <div class="text-center panel glass-panel">
+          <h2 class="section-title">AI-Powered Translation</h2>
+          <p class="section-body">Harnessing cutting-edge machine learning to instantly translate ASL into text and
+            spoken language, providing seamless interactivity.</p>
+        </div>
+      </section>
+
+      <!-- 70-90% -->
+      <section class="step step-4">
+        <div class="team-nodes">
+          <div class="team-node node-1"><span>Lakshya</span></div>
+          <div class="team-node node-2"><span>Ashutosh</span></div>
+          <div class="team-node node-3"><span>Mohammad</span></div>
+          <div class="team-node node-4"><span>Kriti</span></div>
+          <div class="team-node node-5"><span>Dev</span></div>
+          <div class="team-node node-6"><span>Abhimann</span></div>
+        </div>
+      </section>
+
+      <!-- 90-100% -->
+      <section class="step step-5">
+        <div class="text-center">
+          <h1 class="cta-title" style="margin-bottom:10px;">Universal Communication is here.</h1>
+          <p style="color:var(--text-muted); margin-bottom:40px;">Keep scrolling to explore our platform.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Normal Scrolling Sections Below the Hero -->
+
+  <!-- Premium Features Grid -->
+  <section class="page-section" id="features">
+    <div class="section-header text-center">
+      <h2 class="glowing-title">Platform Features</h2>
+      <p class="sub-body">Discover the key capabilities of our translation engine designed for inclusivity and scale.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card interactive-card">
+        <div class="card-icon">⚡</div>
+        <h3>Real-Time Recognition</h3>
+        <p>Our proprietary AI algorithms process hand tracking and gestures in ultra-low latency, providing real-time
+          sentence construction without any lag.</p>
+      </div>
+      <div class="feature-card interactive-card">
+        <div class="card-icon">🌍</div>
+        <h3>Multi-Language Support</h3>
+        <p>Convert ASL dynamically into high-fidelity synthesized speech and text seamlessly.</p>
+        <div class="language-selector mt-4">
+          <select class="glass-select">
+            <option>English</option>
+            <option>Spanish (Español)</option>
+            <option>French (Français)</option>
+            <option>German (Deutsch)</option>
+            <option>Italian (Italiano)</option>
+          </select>
+        </div>
+      </div>
+      <div class="feature-card interactive-card">
+        <div class="card-icon">🧠</div>
+        <h3>Neural AI Engine</h3>
+        <p>Trained on thousands of hours of high-fidelity volumetric data, ensuring contextual accuracy rather than just
+          literal word-to-word mapping.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive ASL Dictionary Section -->
+  <section class="page-section" id="dictionary">
+    <div class="section-header text-center">
+      <h2 class="glowing-title">ASL Alphabet Dictionary</h2>
+      <p class="sub-body">Explore American Sign Language gestures (A–Z). Search or click any card to practice.</p>
+    </div>
+
+    <div class="dictionary-controls">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="dict-search" placeholder="Search letter or sign (e.g. A, B, Hello)...">
+      </div>
+    </div>
+
+    <div class="dictionary-grid" id="dict-grid">
+      <!-- Generated dynamically by main.js -->
+    </div>
+  </section>
+
+  <!-- Premium Contact Page -->
+  <section class="page-section" id="contact">
+    <div class="contact-container interactive-card">
+      <div class="contact-left">
+        <h2 class="glowing-title" style="text-align:left;">Get In Touch</h2>
+        <p>We value your feedback. Have questions or need assistance integrating our API? Reach out directly to our
+          engineers.</p>
+
+        <div class="contact-info mt-4">
+          <div class="contact-item">
+            <span>Email</span>
+            <p>aslhelp@gmail.com</p>
+          </div>
+          <div class="contact-item">
+            <span>Mobile</span>
+            <p>+91 6306262325</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-right">
+        <form class="feedback-form">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" class="glass-input" placeholder="e.g. John Doe">
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" class="glass-input" placeholder="john@example.com">
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea class="glass-input textarea" placeholder="Your questions or feedback..."></textarea>
+          </div>
+          <button type="button" class="btn-primary mt-2 glossy-btn">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Mouse Glow -->
+  <div class="mouse-glow"></div>
+
+  <script src="main.js"></script>
+</body>
+
+</html>

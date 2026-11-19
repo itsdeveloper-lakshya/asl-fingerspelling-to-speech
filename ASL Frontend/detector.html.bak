@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL Engine</title>
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Sleek, High-End Tech Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Absolute Premium CSS overriding Bootstrap defaults */
+    :root {
+      --bg-color: #020202;
+      --glass: rgba(8, 8, 8, 0.45);
+      --glass-border: rgba(255, 255, 255, 0.06);
+      --font-outfit: 'Outfit', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+    
+    body, html { width: 100%; height: 100%; overflow: hidden; background: var(--bg-color); font-family: var(--font-outfit) !important; color: #fff;}
+
+    /* Cinematic Pan & Zoom Background */
+    .cinematic-bg {
+      position: absolute; top: -5%; left: -5%; width: 110%; height: 110%;
+      background: url('bg-cinematic.png') center/cover no-repeat;
+      z-index: 1;
+      animation: panZoom 40s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      filter: blur(2px) brightness(0.7);
+    }
+    @keyframes panZoom { 0% { transform: scale(1.0) translate(0, 0); } 100% { transform: scale(1.1) translate(-2%, 2%); } }
+
+    /* The Interactive Frost Layer & Lens Spotlight */
+    .frost-layer {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(60px) saturate(120%);
+      -webkit-backdrop-filter: blur(60px) saturate(120%);
+      mask-image: radial-gradient(circle 450px at var(--mouse-x, 50%) var(--mouse-y, 50%), transparent 0%, black 100%);
+      -webkit-mask-image: radial-gradient(circle 450px at var(--mouse-x, 50%) var(--mouse-y, 50%), transparent 0%, black 100%);
+      transition: mask-image 0.1s ease-out, -webkit-mask-image 0.1s ease-out;
+    }
+
+    .vignette {
+      position: absolute; top:0; left:0; width: 100%; height: 100%;
+      background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.85) 100%);
+      z-index: 3; pointer-events: none;
+    }
+
+    .app-wrapper {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; justify-content: center; align-items: center;
+      z-index: 10; padding: 40px; pointer-events: none;
+    }
+
+    .top-nav { position: absolute; top: 40px; left: 60px; z-index: 50; pointer-events: auto; }
+    
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.5);
+      text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 2px;
+      text-transform: uppercase; transition: all 0.4s ease;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); padding: 12px 28px; border-radius: 30px;
+      backdrop-filter: blur(10px);
+    }
+    .btn-back:hover { color: #FFF; background: rgba(255,255,255,0.08); transform: translateX(-5px); border-color: rgba(255,255,255,0.2); }
+
+    /* The Main Premium Card WITH INTERACTIVE BORDER GLOW */
+    .premium-card {
+      background: var(--glass); backdrop-filter: blur(60px); -webkit-backdrop-filter: blur(60px);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.9); border-radius: 36px; padding: 56px 64px;
+      width: 100%; max-width: 640px; text-align: center; position: relative; pointer-events: auto;
+      transform-style: preserve-3d; will-change: transform; opacity: 0; transform: translateY(40px);
+    }
+
+    .premium-card::before {
+      content: ''; position: absolute; inset: 0; border-radius: 36px; padding: 1.5px;
+      background: radial-gradient(500px circle at var(--card-mouse-x, 50%) var(--card-mouse-y, -20%), rgba(255,255,255,0.8), rgba(255,255,255,0.05) 40%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+
+    /* Typography */
+    .title-wrapper { margin-bottom: 40px; }
+    .title { font-size: 3rem; font-weight: 300; letter-spacing: -1.5px; color: #FFF; margin-bottom: 12px; }
+    .title span { font-weight: 600; background: linear-gradient(135deg, #FFF 0%, #888 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { font-size: 1.05rem; color: rgba(255,255,255,0.4); font-weight: 400; line-height: 1.6; max-width: 450px; margin: 0 auto; }
+
+    /* UI Controls Layout */
+    .controls-row { display: flex; justify-content: center; align-items: center; margin-bottom: 30px; }
+    .label { font-size: 0.85rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 500; margin-right: 15px;}
+    
+    /* Premium Bootstrap Dropdown Override */
+    .premium-select-btn {
+      background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); color: #FFF;
+      padding: 12px 28px; border-radius: 20px; font-size: 0.95rem; font-weight: 500;
+      transition: all 0.3s; width: 160px;
+    }
+    .premium-select-btn:hover, .premium-select-btn:focus, .premium-select-btn:active, .premium-select-btn[aria-expanded="true"] {
+      background: rgba(255,255,255,0.1) !important; border-color: rgba(255,255,255,0.3) !important; color: #FFF !important; box-shadow: 0 0 20px rgba(255,255,255,0.05) !important;
+    }
+    .premium-select-btn::after { margin-left: 10px; }
+
+    .glass-dropdown-menu {
+      background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px;
+      padding: 10px; margin-top: 5px !important; box-shadow: 0 20px 40px rgba(0,0,0,0.5); min-width: 160px;
+    }
+    .glass-dropdown-menu .dropdown-item {
+      color: rgba(255,255,255,0.7); border-radius: 8px; padding: 8px 16px; font-weight: 500; font-size: 0.95rem; transition: 0.2s;
+    }
+    .glass-dropdown-menu .dropdown-item:hover {
+      background: rgba(255,255,255,0.08); color: #FFF; transform: translateX(5px);
+    }
+
+    /* 3D Camera Module */
+    .camera-module {
+      width: 100%; height: 280px; background: #020202; border-radius: 24px; position: relative; overflow: hidden;
+      margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.04); box-shadow: inset 0 20px 60px rgba(0,0,0,0.8);
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    #webgl-canvas {
+      position: absolute; top:0; left:0; width: 100%; height: 100%; mix-blend-mode: screen; pointer-events: none;
+    }
+
+    .status-indicator {
+      display: flex; align-items: center; gap: 12px; z-index: 10;
+      background: rgba(0,0,0,0.6); padding: 12px 24px; border-radius: 30px; 
+      border: 1px solid rgba(255,255,255,0.05); backdrop-filter: blur(10px);
+    }
+    .pulse-dot { width: 8px; height: 8px; background: #FFF; border-radius: 50%; box-shadow: 0 0 15px rgba(255,255,255,0.8); animation: blink 2s infinite; }
+    .status-text { color: rgba(255,255,255,0.7); font-size: 0.8rem; letter-spacing: 4px; font-weight: 500; text-transform: uppercase; }
+    @keyframes blink { 0%, 100% { opacity: 0.1; } 50% { opacity: 1; } }
+
+    /* Action Buttons */
+    .btn-group { display: flex; gap: 16px; justify-content: center; width: 100%; }
+    
+    .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); padding: 16px 36px; border-radius: 24px; font-weight: 500; font-size: 1rem; transition: all 0.4s ease; text-decoration:none; display:inline-block;}
+    .btn-secondary:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.3); transform: translateY(-2px); color: #FFF; }
+
+    .btn-primary {
+      position: relative; background: #FFF; border: none; color: #000;
+      padding: 16px 48px; border-radius: 24px; font-weight: 600; font-size: 1rem; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(255,255,255,0.15); overflow: hidden; display:inline-block; text-decoration:none;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+      transform: skewX(-20deg); transition: 0s;
+    }
+    .btn-primary:hover { background: #E0E0E0; transform: translateY(-3px); box-shadow: 0 15px 40px rgba(255,255,255,0.3); color:#000;}
+    .btn-primary:hover::after { left: 150%; transition: 0.6s ease-in-out; }
+
+    /* Custom Premium Cursor */
+    .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; border-radius: 50%; z-index: 999999; pointer-events: none; mix-blend-mode: difference; }
+    .cursor-dot { width: 6px; height: 6px; background-color: #FFF; transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); margin: 0; }
+    .cursor-outline { width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.3); transition: transform 0.2s, opacity 0.2s; }
+    
+    body.hovering .cursor-outline { transform: scale(0.5); opacity: 0; }
+    body.hovering .cursor-dot { transform: scale(10); background-color: rgba(255,255,255,1); mix-blend-mode: normal; }
+
+  </style>
+</head>
+<body>
+  
+  <div class="cursor-dot"></div>
+  <div class="cursor-outline"></div>
+
+  <!-- The Core Cinematic Layers -->
+  <div class="cinematic-bg"></div>
+  <div class="frost-layer"></div>
+  <div class="vignette"></div>
+
+  <div class="top-nav">
+    <a href="index.html" class="btn-back interactive-el">← Return</a>
+  </div>
+
+  <div class="app-wrapper">
+    <!-- The Main Translation Console -->
+    <div class="premium-card">
+      
+      <div class="title-wrapper">
+        <h1 class="title">ASL <span>Detector</span></h1>
+        <p class="subtitle">Select your native language and initialize the 3D sensor module to begin translation.</p>
+      </div>
+
+      <!-- Completely upgraded Dropdown using Bootstrap JS -->
+      <div class="controls-row">
+        <span class="label">Output Stream:</span>
+        <div class="dropdown">
+          <button class="btn dropdown-toggle premium-select-btn interactive-el" type="button" id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            English
+          </button>
+          <ul class="dropdown-menu glass-dropdown-menu" aria-labelledby="langDropdown">
+            <li><a class="dropdown-item" href="#" onclick="document.getElementById('langDropdown').innerText='English'">English</a></li>
+            <li><a class="dropdown-item" href="#" onclick="document.getElementById('langDropdown').innerText='Assamese'">Assamese</a></li>
+            <li><a class="dropdown-item" href="#" onclick="document.getElementById('langDropdown').innerText='Spanish'">Spanish</a></li>
+            <li><a class="dropdown-item" href="#" onclick="document.getElementById('langDropdown').innerText='French'">French</a></li>
+            <li><a class="dropdown-item" href="#" onclick="document.getElementById('langDropdown').innerText='Hindi'">Hindi</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Live Monitor Module with ThreeJS Hologram Data -->
+      <div class="camera-module interactive-el" id="webgl-container">
+        <!-- ThreeJS spawns canvas here -->
+        <div class="status-indicator">
+          <div class="pulse-dot"></div>
+          <span class="status-text">Sensor Standby</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-group">
+        <a href="#" class="btn-secondary interactive-el">Play Sequence</a>
+        <a href="#" class="btn-primary interactive-el">Capture Motion</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- GSAP Animation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Three.JS injection -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  
+  <script src="detector.js"></script>
+</body>
+</html>
